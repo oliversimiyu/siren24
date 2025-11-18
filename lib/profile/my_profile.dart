@@ -11,6 +11,7 @@ import 'package:siren24/state/api_calling.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart' as path;
+import 'package:siren24/services/user_storage.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({Key? key}) : super(key: key);
@@ -31,16 +32,42 @@ class _MyProfileState extends State<MyProfile> {
   String _imagelink =
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBSosYcX8VPrpuos_y96aBACA795fmUqppmQ&usqp=CAU";
   LoadDetails() async {
-    GetProfileDetails details = await ApiCaller().ProfileDetails();
-    setState(() {
-      userName = details.name!;
-      userEmail = details.address!;
-      birthDateInString = details.dob!;
-      Phone = details.phoneno!;
-      //  _imagelink = details.profileImg!;
-    });
-    final SharedPreferences SharedPrefrences =
-        await SharedPreferences.getInstance();
+    try {
+      // Try to load from local storage first
+      Map<String, dynamic>? currentUser =
+          await UserStorageService.getCurrentUser();
+
+      if (currentUser != null) {
+        setState(() {
+          userName = currentUser['name'] ?? 'Update username';
+          userEmail = currentUser['email'] ?? 'Update email';
+          Phone = int.tryParse(currentUser['phone']) ?? 0;
+          birthDateInString = currentUser['dob'] ?? 'Update your birth date';
+        });
+      } else {
+        // Fallback to API if no local user found
+        try {
+          GetProfileDetails details = await ApiCaller().ProfileDetails();
+          setState(() {
+            userName = details.name!;
+            userEmail = details.address!;
+            birthDateInString = details.dob!;
+            Phone = details.phoneno!;
+          });
+        } catch (e) {
+          print('Error loading profile from API: $e');
+          // Set default values if both local and API fail
+          setState(() {
+            userName = 'Update username';
+            userEmail = 'Update email';
+            birthDateInString = 'Update your birth date';
+            Phone = 0;
+          });
+        }
+      }
+    } catch (e) {
+      print('Error loading profile details: $e');
+    }
   }
 
 /*   final ImagePicker _picker = ImagePicker();

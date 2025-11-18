@@ -24,6 +24,7 @@ import 'package:siren24/profile/settings.dart';
 
 import 'package:siren24/signup/signin.dart';
 import 'package:siren24/state/api_calling.dart';
+import 'package:siren24/services/user_storage.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:uuid/uuid.dart';
@@ -195,19 +196,51 @@ class _HomeScreenState extends State<HomeScreen> {
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBSosYcX8VPrpuos_y96aBACA795fmUqppmQ&usqp=CAU";
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String name = "User Name";
+  String userPhone = "";
+  String userEmail = "";
+
   Future<void> loadimage() async {
     final SharedPreferences SharedPrefrences =
         await SharedPreferences.getInstance();
-    _imagelink = SharedPrefrences.getString('profilepic')!;
+    String? profilePic = SharedPrefrences.getString('profilepic');
+    if (profilePic != null) {
+      _imagelink = profilePic;
+    }
   }
 
   LoadDetails() async {
-    Timer(Duration(seconds: 5), () async {
-      GetProfileDetails details = await ApiCaller().ProfileDetails();
-      setState(() {
-        name = details.name!;
-      });
-    });
+    try {
+      // Load user details from local storage
+      Map<String, dynamic>? currentUser =
+          await UserStorageService.getCurrentUser();
+
+      if (currentUser != null) {
+        setState(() {
+          name = currentUser['name'] ?? 'User Name';
+          userPhone = currentUser['phone'] ?? '';
+          userEmail = currentUser['email'] ?? '';
+        });
+      } else {
+        // Fallback to API if no local user found
+        try {
+          Timer(Duration(seconds: 5), () async {
+            GetProfileDetails details = await ApiCaller().ProfileDetails();
+            setState(() {
+              name = details.name!;
+            });
+          });
+        } catch (e) {
+          print('Error loading profile from API: $e');
+        }
+      }
+    } catch (e) {
+      print('Error loading user details: $e');
+    }
+  }
+
+  // Method to refresh user data - can be called when user profile is updated
+  Future<void> refreshUserData() async {
+    await LoadDetails();
   }
 
   @override
@@ -612,7 +645,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView(
         children: [
           Container(
-            height: 275,
+            height: 300,
             color: Color(0Xff4C6EE5),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -635,8 +668,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 8),
+                  if (userPhone.isNotEmpty)
+                    Text(
+                      userPhone,
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  if (userEmail.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        userEmail,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -711,11 +765,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             title: Text('Logout'),
             onTap: () async {
-              ApiCaller().Logout();
-              SharedPreferences SharedPrefrences =
-                  await SharedPreferences.getInstance();
-              await SharedPrefrences.clear();
-              Navigator.pop(context, Sign_in.id);
+              // Clear session data while preserving registered users
+              await UserStorageService.clearSessionData();
+
+              // Navigate back to sign in page
+              Navigator.pushNamedAndRemoveUntil(
+                  context, Sign_in.id, (route) => false);
             },
           ),
         ],

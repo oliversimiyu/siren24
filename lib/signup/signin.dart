@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:siren24/signup/verifcation.dart';
 import 'package:siren24/signup/registration.dart';
-import 'package:siren24/state/api_calling.dart';
+import 'package:siren24/services/user_storage.dart';
+import 'package:siren24/basescreen/home_screen.dart';
 
 class Sign_in extends StatefulWidget {
   const Sign_in({Key? key}) : super(key: key);
@@ -215,13 +215,44 @@ class _Sign_inState extends State<Sign_in> {
                       ),
                       Expanded(child: SizedBox()),
                       GestureDetector(
-                        onTap: () {
-                          var phone_no = int.parse(_textController.text);
-                          ApiCaller().sendOtpToPhone(phone_no);
-                          Navigator.pushNamed(context, OtpVerification.id,
-                              arguments: {
-                                'isFromRegistration': false,
-                              });
+                        onTap: () async {
+                          if (_textController.text.isNotEmpty) {
+                            // Check if user exists in local storage
+                            Map<String, dynamic>? user =
+                                await UserStorageService.loginUser(
+                                    _textController.text);
+
+                            if (user != null) {
+                              // User found, login successful
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Login successful! Welcome ${user['name']}'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+
+                              // Navigate to home screen
+                              Navigator.pushReplacementNamed(
+                                  context, HomeScreen.id);
+                            } else {
+                              // User not found
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Phone number not found. Please register first.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Please enter your phone number'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
                         },
                         child: Center(
                           child: Container(

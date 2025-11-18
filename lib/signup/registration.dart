@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:siren24/services/user_storage.dart';
 
 class Registration extends StatefulWidget {
   const Registration({Key? key}) : super(key: key);
@@ -288,23 +289,44 @@ class _RegistrationState extends State<Registration> {
                       ),
                       Expanded(child: SizedBox()),
                       GestureDetector(
-                        onTap: () {
+                        onTap: () async {
                           if (_phoneController.text.isNotEmpty &&
                               _nameController.text.isNotEmpty) {
-                            // Show success message
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Registration successful! Please login with your credentials.'),
-                                backgroundColor: Colors.green,
-                                duration: Duration(seconds: 2),
-                              ),
+                            // Save user data to storage
+                            bool registrationSuccess =
+                                await UserStorageService.registerUser(
+                              phone: _phoneController.text,
+                              name: _nameController.text,
+                              email: _emailController.text.isNotEmpty
+                                  ? _emailController.text
+                                  : null,
                             );
 
-                            // Navigate back to login page after a short delay
-                            Future.delayed(Duration(seconds: 2), () {
-                              Navigator.pop(context);
-                            });
+                            if (registrationSuccess) {
+                              // Show success message
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Registration successful! Please login with your credentials.'),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+
+                              // Navigate back to login page after a short delay
+                              Future.delayed(Duration(seconds: 2), () {
+                                Navigator.pop(context);
+                              });
+                            } else {
+                              // Show error message if user already exists
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'User with this phone number already exists!'),
+                                  backgroundColor: Colors.orange,
+                                ),
+                              );
+                            }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

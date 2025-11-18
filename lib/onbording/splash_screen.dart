@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:siren24/onbording/OnboardingScreens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:siren24/services/user_storage.dart';
 
 import '../basescreen/home_screen.dart';
 
@@ -31,6 +32,17 @@ class _Splash_ScreenState extends State<Splash_Screen> {
   }
 
   Future getValidationData() async {
+    // Check if user is logged in using our storage service
+    bool isLoggedIn = await UserStorageService.isUserLoggedIn();
+
+    if (isLoggedIn) {
+      setState(() {
+        _authToken = "logged_in"; // Set to indicate user is logged in
+      });
+      return;
+    }
+
+    // Fallback to check old auth token method
     final SharedPreferences SharedPrefrences =
         await SharedPreferences.getInstance();
 
