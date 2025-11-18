@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:siren24/basescreen/home_screen.dart';
+import 'package:siren24/signup/signin.dart';
 import 'package:siren24/state/api_calling.dart';
 
 class OtpVerification extends StatefulWidget {
@@ -16,8 +17,15 @@ class OtpVerification extends StatefulWidget {
 class _OtpVerificationState extends State<OtpVerification> {
   OtpFieldController otpController = OtpFieldController();
   late String otp;
+
   @override
   Widget build(BuildContext context) {
+    // Get the arguments passed from registration or signin screen
+    final Map<String, dynamic>? arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final bool isFromRegistration = arguments?['isFromRegistration'] ?? false;
+    final Map<String, dynamic>? userData = arguments?['userData'];
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return SafeArea(
@@ -98,7 +106,26 @@ class _OtpVerificationState extends State<OtpVerification> {
                         onTap: () {
                           var int_otp = int.parse(otp);
                           ApiCaller().verifyOtp(int_otp);
-                          Navigator.pushNamed(context, HomeScreen.id);
+
+                          if (isFromRegistration) {
+                            // If coming from registration, show success message and redirect to login
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Registration successful! Please login with your credentials.'),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 3),
+                              ),
+                            );
+                            // Navigate back to login screen
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              Sign_in.id,
+                              (Route<dynamic> route) => false,
+                            );
+                          } else {
+                            // If coming from login, go to home screen
+                            Navigator.pushNamed(context, HomeScreen.id);
+                          }
                         },
                         child: Center(
                           child: Container(

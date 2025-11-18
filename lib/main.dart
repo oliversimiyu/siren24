@@ -16,6 +16,7 @@ import 'package:siren24/profile/notification.dart';
 import 'package:siren24/profile/settings.dart';
 import 'package:siren24/Sheets/date_picker.dart';
 import 'package:siren24/signup/signin.dart';
+import 'package:siren24/signup/registration.dart';
 import 'package:siren24/signup/verifcation.dart';
 import 'package:logger/logger.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -362,6 +363,7 @@ class _MyAppState extends State<MyApp> {
             HomeScreen.id: (context) => const HomeScreen(),
             OnboardingScreens.id: (context) => const OnboardingScreens(),
             Sign_in.id: (context) => const Sign_in(),
+            Registration.id: (context) => const Registration(),
             OtpVerification.id: (context) => const OtpVerification(),
             setup_gps_screen.id: (context) => const setup_gps_screen(),
             Settings.id: (context) => const Settings(),
