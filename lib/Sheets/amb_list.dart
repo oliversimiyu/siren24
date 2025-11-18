@@ -1,15 +1,11 @@
 import 'dart:async';
-//FuGYBSq6uZ5WavdER8MA6Cauy28PJEkfo2wmNvq7LbHe
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:siren24/Models/amblist.dart';
-import 'package:siren24/profile/settings.dart';
-import 'package:siren24/profile/settings.dart';
 import 'package:siren24/state/api_calling.dart';
 import '../my-globals.dart' as globals;
 
 class AmbulanceList extends StatefulWidget {
-  final FlexibleDraggableScrollableSheetScrollController controller;
+  final DraggableScrollableController controller;
   final VoidCallback next;
   final String destinationname;
   String ambulanceid;
@@ -45,7 +41,6 @@ class _AmbulanceListState extends State<AmbulanceList> {
               ),
               color: Colors.white),
           child: ListView(
-            controller: widget.controller,
             children: [
               SizedBox(
                 height: 25,

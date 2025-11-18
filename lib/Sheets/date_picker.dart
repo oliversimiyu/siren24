@@ -17,14 +17,12 @@ class Date_select extends StatefulWidget {
 
 class _Date_selectState extends State<Date_select> {
   DateTime selectedDate = DateTime.now();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _timeController = TextEditingController();
-  late String _hour, _minute, _time;
+  final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
   TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: Container(
@@ -173,8 +171,8 @@ class _Date_selectState extends State<Date_select> {
                           actions: <Widget>[
                             GestureDetector(
                               onTap: () {
-                                if (_dateController.text != null &&
-                                    _timeController.text != null) {
+                                if (_dateController.text.isNotEmpty &&
+                                    _timeController.text.isNotEmpty) {
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                   Navigator.pop(context);
@@ -211,7 +209,7 @@ class _Date_selectState extends State<Date_select> {
                     child: Center(
                       child: GestureDetector(
                         onTap: () async {
-                          final p = await ApiCaller().BookLater();
+                          await ApiCaller().BookLater();
                         },
                         child: Text(
                           'Confirm',
@@ -244,7 +242,7 @@ class _Date_selectState extends State<Date_select> {
       context: context,
       builder: (context, controller, offset) {
         return Driver_info(
-          infocontroller: controller,
+          infocontroller: DraggableScrollableController(),
           cancel: () {
             showDialog(
                 context: context,

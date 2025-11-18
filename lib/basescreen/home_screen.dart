@@ -28,7 +28,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:uuid/uuid.dart';
 import 'package:bottom_sheet/bottom_sheet.dart';
-import 'package:google_map_polyline_new/google_map_polyline_new.dart';
+// import 'package:google_map_polyline_new/google_map_polyline_new.dart'; // Package not available
 import 'package:google_place/google_place.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -799,5 +799,4 @@ class _HomeScreenState extends State<HomeScreen> {
       _polylines[id] = polyline;
       _polylineCount++;
     }); */
-
 }

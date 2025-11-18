@@ -123,6 +123,7 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   void initState() {
+    super.initState();
     LoadDetails();
     loadimage();
   }

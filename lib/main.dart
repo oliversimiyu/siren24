@@ -49,8 +49,8 @@ void main() async {
   // );
   // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   runApp(MyApp(
-   // initialLink: initialLink,
-  ));
+      // initialLink: initialLink,
+      ));
 }
 
 List? data;
@@ -89,7 +89,8 @@ Future<void> _terminated() async {
     Logger().d('getinitil');
     normalNotification(
         initialMessage.data['title'], initialMessage.data['body']);
-    AwesomeNotifications().actionStream.listen((event) {
+    AwesomeNotifications().setListeners(
+        onActionReceivedMethod: (ReceivedAction event) async {
       Logger().d(event.channelKey);
       Logger().d(data);
     });
@@ -347,16 +348,13 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getMessage();
-    AwesomeNotifications().actionStream.listen((event) {
-      Logger().d(event.channelKey);
-      Logger().d(data);
-    });
+    // AwesomeNotifications action stream is deprecated
   }
 
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      builder: () => OverlaySupport(
+      builder: (context, child) => OverlaySupport(
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           home: Splash_Screen(),

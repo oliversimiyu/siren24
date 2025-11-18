@@ -1,4 +1,4 @@
-import 'package:bottom_sheet/bottom_sheet.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:siren24/state/api_calling.dart';
 import 'package:siren24/Sheets/Driver_info.dart';
@@ -8,7 +8,7 @@ import 'package:siren24/Models/cancel_booking.dart';
 import 'date_picker.dart';
 
 class FareSummary extends StatefulWidget {
-  final FlexibleDraggableScrollableSheetScrollController farecontroller;
+  final DraggableScrollableController farecontroller;
   final int? total;
   final int? addonsprice;
   final int? ambprice;
@@ -40,7 +40,6 @@ class _FareSummaryState extends State<FareSummary> {
           ),
           color: Colors.white),
       child: ListView(
-        controller: widget.farecontroller,
         children: [
           SizedBox(
             height: 40,
@@ -228,7 +227,6 @@ class _FareSummaryState extends State<FareSummary> {
                   child: GestureDetector(
                     onTap: () async {
                       await ApiCaller().BookNow();
-                      DateTime now = DateTime.now();
                       FocusScope.of(context).requestFocus(FocusNode());
                       showDialog(
                         context: context,
@@ -358,15 +356,12 @@ class _FareSummaryState extends State<FareSummary> {
   }
 
   void driver_info() {
-    showFlexibleBottomSheet<void>(
-      minHeight: 0.2,
-      initHeight: 0.4,
-      maxHeight: 0.4,
-      isCollapsible: false,
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context, controller, offset) {
+      isScrollControlled: true,
+      builder: (context) {
         return Driver_info(
-          infocontroller: controller,
+          infocontroller: DraggableScrollableController(),
           cancel: () {
             showDialog(
                 context: context,
@@ -442,7 +437,6 @@ class _FareSummaryState extends State<FareSummary> {
           },
         );
       },
-      anchors: [0.2, 0.4],
     );
   }
 }

@@ -1,11 +1,10 @@
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:siren24/my-globals.dart';
 import 'package:siren24/state/api_calling.dart';
 import '../my-globals.dart' as globals;
 
 class Driver_info extends StatefulWidget {
-  final FlexibleDraggableScrollableSheetScrollController infocontroller;
+  final DraggableScrollableController infocontroller;
   final VoidCallback cancel;
 
   Driver_info({required this.infocontroller, required this.cancel, Key? key})
@@ -26,7 +25,6 @@ class _Driver_infoState extends State<Driver_info> {
             ),
             color: Colors.white),
         child: ListView(
-          controller: widget.infocontroller,
           children: [
             Container(
               height: 68,

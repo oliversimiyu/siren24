@@ -73,7 +73,7 @@ class _InviteFriendsState extends State<InviteFriends> {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: Size(375, 812),
-      builder: () => Scaffold(
+      builder: (context, child) => Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Color(0Xff4C6EE5)),
           backgroundColor: Colors.transparent,

@@ -1,11 +1,10 @@
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:siren24/Models/addons_list.dart';
 import '../my-globals.dart' as globals;
 import 'package:siren24/state/api_calling.dart';
 
 class AddOnList extends StatefulWidget {
-  final FlexibleDraggableScrollableSheetScrollController addoncontroller;
+  final DraggableScrollableController addoncontroller;
   final VoidCallback addnext;
   final String ambid;
   AddOnList(
@@ -66,7 +65,7 @@ class _AddOnListState extends State<AddOnList> {
                   for (var i = 1; i <= snapshot.data!.length; i++) {
                     addcolor.add(Colors.white);
                   }
-                 
+
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: ClampingScrollPhysics(),
@@ -89,7 +88,6 @@ class _AddOnListState extends State<AddOnList> {
                                       addonname
                                           .add(snapshot.data![index].name!);
                                       globals.addons = addonname;
-                                      
                                     } else {
                                       addcolor[index] = Colors.white;
                                       addonname

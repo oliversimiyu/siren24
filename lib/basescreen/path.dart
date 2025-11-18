@@ -1,21 +1,15 @@
 import 'dart:async';
-import 'dart:ffi';
-import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_routes/google_maps_routes.dart';
-import 'package:siren24/Models/cancel_booking.dart';
 import 'package:siren24/Models/fare_summary.dart';
-import 'package:siren24/Sheets/Driver_info.dart';
 import 'package:siren24/Sheets/add_on_list.dart';
 import 'package:siren24/Sheets/amb_list.dart';
 import 'package:siren24/Sheets/date_picker.dart';
 import 'package:siren24/Sheets/fare_summary.dart';
-import 'package:siren24/basescreen/home_screen.dart';
-import 'package:siren24/basescreen/rating.dart';
 import 'package:siren24/state/api_calling.dart';
 import '../my-globals.dart' as globals;
 
@@ -64,8 +58,6 @@ class _Path_NavigateState extends State<Path_Navigate> {
   String cancelreply = "";
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.width;
     if (isMapCreated) {
       changeMapMode();
     }
@@ -132,15 +124,12 @@ class _Path_NavigateState extends State<Path_Navigate> {
   }
 
   void _showAmbulance() {
-    showFlexibleBottomSheet<void>(
-      minHeight: 0.3,
-      initHeight: 0.6,
-      maxHeight: 0.6,
-      isCollapsible: false,
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context, controller, offset) {
+      isScrollControlled: true,
+      builder: (context) {
         return AmbulanceList(
-          controller: controller,
+          controller: DraggableScrollableController(),
           destinationname: widget.destinationname,
           ambulanceid: Ambulanceid,
           next: () {
@@ -149,7 +138,6 @@ class _Path_NavigateState extends State<Path_Navigate> {
           },
         );
       },
-      anchors: [0.3, 0.5],
     );
   }
 
@@ -162,15 +150,12 @@ class _Path_NavigateState extends State<Path_Navigate> {
     globals.drimage = fare.driverImg!;
     globals.amount = fare.totalPrice!;
 
-    showFlexibleBottomSheet<void>(
-      minHeight: 0.3,
-      initHeight: 0.6,
-      maxHeight: 0.6,
-      isCollapsible: false,
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context, controller, offset) {
+      isScrollControlled: true,
+      builder: (context) {
         return FareSummary(
-          farecontroller: controller,
+          farecontroller: DraggableScrollableController(),
           total: fare.totalPrice,
           ambprice: fare.price,
           addonsprice: fare.addons,
@@ -180,42 +165,33 @@ class _Path_NavigateState extends State<Path_Navigate> {
           },
         );
       },
-      anchors: [0.3, 0.5],
     );
   }
 
   Future<void> DateSheet() async {
-    showFlexibleBottomSheet<void>(
-      minHeight: 0.3,
-      initHeight: 0.6,
-      maxHeight: 0.6,
-      isCollapsible: false,
-      isDismissible: false,
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context, controller, offset) {
+      isScrollControlled: true,
+      isDismissible: false,
+      builder: (context) {
         return Date_select();
       },
-      anchors: [0.3, 0.5],
     );
   }
 
   void addonsSheet() {
-    showFlexibleBottomSheet<void>(
-      minHeight: 0.3,
-      initHeight: 0.6,
-      maxHeight: 0.6,
-      isCollapsible: false,
+    showModalBottomSheet<void>(
       context: context,
-      builder: (context, controller, offset) {
+      isScrollControlled: true,
+      builder: (context) {
         return AddOnList(
-          addoncontroller: controller,
+          addoncontroller: DraggableScrollableController(),
           ambid: Ambulanceid,
           addnext: () {
             _fareSummary();
           },
         );
       },
-      anchors: [0.3, 0.5],
     );
   }
 

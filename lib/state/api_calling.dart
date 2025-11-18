@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart';
@@ -10,14 +9,10 @@ import 'package:siren24/Models/cancel_booking.dart';
 import 'package:siren24/Models/fare_summary.dart';
 import 'package:siren24/Models/history_model.dart';
 import 'package:siren24/Models/otp.dart';
-import 'package:siren24/Models/profileImage.dart';
 import 'package:siren24/Models/user_details.dart';
 import 'package:siren24/Models/verification.dart';
-import 'package:siren24/Sheets/amb_list.dart';
-import 'package:siren24/profile/history.dart';
 import '../my-globals.dart' as globals;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:dio/dio.dart' as dio;
 import 'package:http/http.dart' as http;
 
 @override

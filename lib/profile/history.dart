@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:siren24/Models/history_model.dart';
 import 'package:siren24/state/api_calling.dart';
-import 'package:location_geocoder/location_geocoder.dart';
+import 'package:geocoding/geocoding.dart';
 
 class History extends StatefulWidget {
   const History({Key? key}) : super(key: key);
@@ -13,17 +13,18 @@ class History extends StatefulWidget {
 class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     Future<String?> Getaddress(double lat, double lng) async {
-      const _apiKey = "AIzaSyASODipwXRfzJNuFRN8lCaQeMnxLXSOvgQ";
-      final LocatitonGeocoder geocoder = LocatitonGeocoder(_apiKey);
-      final address =
-          await geocoder.findAddressesFromCoordinates(Coordinates(lat, lng));
-      print(address.first.addressLine);
-      String? str = address.first.addressLine;
-      String? finalstr = str!.substring(8, str.length);
-      return finalstr;
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          return "${place.street}, ${place.locality}, ${place.country}";
+        }
+      } catch (e) {
+        print("Error getting address: $e");
+      }
+      return "Address not found";
     }
 
     return Scaffold(
