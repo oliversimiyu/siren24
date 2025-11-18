@@ -839,19 +839,5 @@ class _HomeScreenState extends State<HomeScreen> {
       anchors: [0, 0.5, 1],
     );
   }
-
-  _addPolyline(List<LatLng>? _coordinates) {
-    PolylineId id = PolylineId("poly$_polylineCount");
-    Polyline polyline = Polyline(
-        polylineId: id,
-        patterns: patterns[0],
-        color: Colors.blueAccent,
-        points: _coordinates!,
-        width: 10,
-        onTap: () {});
-
-    setState(() {
-      _polylines[id] = polyline;
-      _polylineCount++;
-    }); */
+  */
 }

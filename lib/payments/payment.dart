@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../my-globals.dart' as globals;
+import '../services/ride_notification_service.dart';
 
 class PaymentPage extends StatefulWidget {
   static String id = 'payment';
@@ -51,10 +52,47 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void handlerPaymentSuccess() {
     print("Payment success");
+    globals.paymentDone = true;
+
+    // Send payment success notification
+    RideNotificationService.sendPaymentCompletedNotification(
+      amount: globals.amount,
+      paymentMethod: "Razorpay",
+    );
+
+    // Send ride completed notification
+    RideNotificationService.sendRideCompletedNotification(
+      destination:
+          globals.locationto.isNotEmpty ? globals.locationto : "Destination",
+      amount: globals.amount,
+    );
+
+    // Navigate back or show success message
+    Navigator.of(context).pop();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment successful! Thank you for using our service.'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   void handlerErrorFailure() {
     print("Payment error");
+
+    // Send payment failure notification
+    RideNotificationService.sendPaymentFailedNotification(
+      amount: globals.amount,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment failed. Please try again or contact support.'),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   void handlerExternalWallet() {
@@ -105,7 +143,7 @@ class _PaymentPageState extends State<PaymentPage> {
               SizedBox(
                 height: 10,
               ),
-             /*  GestureDetector(
+              /*  GestureDetector(
                 onTap: () {},
                 child: Container(
                   decoration: BoxDecoration(

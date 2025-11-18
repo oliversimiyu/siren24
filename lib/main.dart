@@ -27,28 +27,48 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:siren24/my-globals.dart';
 
 void main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize ride notifications
+  try {
+    await AwesomeNotifications().initialize(
+      'resource://drawable/res_app_icon',
+      [
+        NotificationChannel(
+          channelKey: 'ride_notifications',
+          channelName: 'Ride Notifications',
+          channelDescription:
+              'Notifications for ride booking and status updates',
+          defaultColor: const Color(0xFF4C6EE5),
+          ledColor: const Color(0xFF4C6EE5),
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+          onlyAlertOnce: false,
+          playSound: true,
+          criticalAlerts: false,
+        ),
+        NotificationChannel(
+          channelKey: 'normal_notif',
+          channelName: 'Normal Notifications',
+          channelDescription: 'General notifications',
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+          ledOnMs: 3000,
+          enableVibration: true,
+          playSound: true,
+          defaultRingtoneType: DefaultRingtoneType.Ringtone,
+        ),
+      ],
+    );
+  } catch (e) {
+    print('Error initializing notifications: $e');
+  }
+
   // await Firebase.initializeApp();
   // final PendingDynamicLinkData? initialLink =
   //     await FirebaseDynamicLinks.instance.getInitialLink();
-  // final SharedPreferences pref = await SharedPreferences.getInstance();
-  // AwesomeNotifications().initialize(
-  //   null,
-  //   [
-  //     NotificationChannel(
-  //       channelKey: 'notif_channel',
-  //       channelName: 'Notification Channel',
-  //       channelDescription: 'Notification Body',
-  //       importance: NotificationImportance.High,
-  //       channelShowBadge: true,
-  //       ledOnMs: 3000,
-  //       enableVibration: true,
-  //       playSound: true,
-  //       defaultRingtoneType: DefaultRingtoneType.Ringtone,
-  //     ),
-  //   ],
-  // );
   // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   runApp(MyApp(
       // initialLink: initialLink,
       ));

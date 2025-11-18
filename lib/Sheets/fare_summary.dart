@@ -1,7 +1,11 @@
+import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:siren24/Sheets/Driver_info.dart';
 import 'package:siren24/basescreen/home_screen.dart';
 import 'date_picker.dart';
+import '../my-globals.dart' as globals;
+import '../services/ride_history_service.dart';
+import '../services/ride_notification_service.dart';
 
 class FareSummary extends StatefulWidget {
   final DraggableScrollableController farecontroller;
@@ -159,17 +163,17 @@ class _FareSummaryState extends State<FareSummary> {
               child: Column(
                 children: [
                   _buildPriceRow(
-                      'Ambulance Service', '₹${widget.ambprice}', false),
+                      'Ambulance Service', 'KSH ${widget.ambprice}', false),
                   const SizedBox(height: 12),
-                  _buildPriceRow(
-                      'Additional Facilities', '₹${widget.addonsprice}', false),
+                  _buildPriceRow('Additional Facilities',
+                      'KSH ${widget.addonsprice}', false),
                   const SizedBox(height: 20),
                   Container(
                     height: 1,
                     color: Colors.grey[300],
                   ),
                   const SizedBox(height: 15),
-                  _buildPriceRow('Total Amount', '₹${widget.total}', true),
+                  _buildPriceRow('Total Amount', 'KSH ${widget.total}', true),
                 ],
               ),
             ),
@@ -279,12 +283,89 @@ class _FareSummaryState extends State<FareSummary> {
       },
     );
 
-    // Simulate API call
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.of(context).pop(); // Close loading dialog
+    // Set mock driver data immediately for fast response
+    _setMockDriverData();
 
+    // Simulate API call with shorter delay
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.of(context).pop(); // Close loading dialog
       _showBookingConfirmation();
     });
+  }
+
+  void _setMockDriverData() {
+    // Set mock data in globals for the driver info screen
+    globals.bookingSuccessful = true;
+    globals.drivername = "Samuel Kiprotich";
+    globals.driverphone = 254712345678;
+    globals.drrating = 5;
+    globals.vhno = "KDB 123A";
+    globals.drimage =
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face";
+    globals.amount = widget.total ?? 0;
+
+    // Save ride to history and send notifications
+    _saveRideToHistory();
+    _sendRideNotifications();
+  }
+
+  Future<void> _saveRideToHistory() async {
+    try {
+      await RideHistoryService.saveRideToHistory(
+        sourceAddress:
+            "Current Location", // You might want to get this from globals or widget
+        destinationAddress: widget.destinationname,
+        sourceLat: globals.currlat ?? 0.0,
+        sourceLng: globals.currentlng ?? 0.0,
+        destinationLat: globals.destilat ?? 0.0,
+        destinationLng: globals.destilng ?? 0.0,
+        amount: widget.total ?? 0,
+        orderType: 'immediate',
+        driverName: globals.drivername,
+        driverPhone: globals.driverphone.toString(),
+        vehicleNumber: globals.vhno,
+      );
+    } catch (e) {
+      print('Failed to save ride to history: $e');
+    }
+  }
+
+  Future<void> _sendRideNotifications() async {
+    try {
+      // Send ride booked notification
+      await RideNotificationService.sendRideBookedNotification(
+        rideType: 'immediate',
+        destination: widget.destinationname,
+        amount: widget.total ?? 0,
+      );
+
+      // Simulate driver assignment notification after a delay
+      Future.delayed(const Duration(seconds: 5), () async {
+        await RideNotificationService.sendDriverAssignedNotification(
+          driverName: globals.drivername,
+          vehicleNumber: globals.vhno,
+          estimatedArrival: "5-10 minutes",
+        );
+      });
+
+      // Simulate driver arrival notification
+      Future.delayed(const Duration(seconds: 15), () async {
+        await RideNotificationService.sendDriverArrivedNotification(
+          driverName: globals.drivername,
+          vehicleNumber: globals.vhno,
+        );
+      });
+
+      // Simulate ride started notification
+      Future.delayed(const Duration(seconds: 25), () async {
+        await RideNotificationService.sendRideStartedNotification(
+          destination: widget.destinationname,
+          driverName: globals.drivername,
+        );
+      });
+    } catch (e) {
+      print('Failed to send ride notifications: $e');
+    }
   }
 
   void _showBookingConfirmation() {
@@ -366,10 +447,13 @@ class _FareSummaryState extends State<FareSummary> {
   }
 
   void driver_info() {
-    showModalBottomSheet<void>(
+    showFlexibleBottomSheet<void>(
+      minHeight: 0.2,
+      initHeight: 0.4,
+      maxHeight: 0.4,
+      isCollapsible: false,
       context: context,
-      isScrollControlled: true,
-      builder: (context) {
+      builder: (context, controller, offset) {
         return Driver_info(
           infocontroller: DraggableScrollableController(),
           cancel: () {
@@ -377,6 +461,7 @@ class _FareSummaryState extends State<FareSummary> {
           },
         );
       },
+      anchors: [0.2, 0.4],
     );
   }
 
@@ -431,6 +516,13 @@ class _FareSummaryState extends State<FareSummary> {
                       await Future.delayed(const Duration(seconds: 1));
 
                       Navigator.of(context).pop(); // Close loading
+
+                      // Send cancellation notification
+                      await RideNotificationService
+                          .sendRideCancelledNotification(
+                        destination: widget.destinationname,
+                        reason: "Cancelled by user",
+                      );
 
                       // Show success message
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -21,3 +21,5 @@ int drrating = 0;
 String vhno = "";
 String drimage = "";
 int amount = 0;
+String location = "";
+String locationto = "";
