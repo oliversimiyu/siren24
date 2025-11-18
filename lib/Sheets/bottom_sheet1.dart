@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class BottomSheetWidget1 extends StatefulWidget {
   final String end;
@@ -25,28 +24,63 @@ class _BottomSheetWidget1State extends State<BottomSheetWidget1> {
 
   @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
 
     return GestureDetector(
       onTap: widget.proceed,
       child: Container(
-        height: height / 2,
-        color: Color(0Xff4C6EE5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 40,
+        height: 80, // Fixed height instead of half screen
+        width: width,
+        decoration: BoxDecoration(
+          color: Color(0Xff4C6EE5),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: Offset(0, -2),
             ),
-            Text(
-              'Apply',
-              style: TextStyle(
-                  fontSize: 15,
-                  decoration: TextDecoration.none,
-                  fontFamily: 'Roboto',
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.check_circle,
                   color: Colors.white,
-                  fontWeight: FontWeight.w500),
+                  size: 24,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Confirm Location',
+                  style: TextStyle(
+                    fontSize: 20,
+                    decoration: TextDecoration.none,
+                    fontFamily: 'Roboto',
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 5),
+            Text(
+              'Tap to proceed with selected location',
+              style: TextStyle(
+                fontSize: 12,
+                decoration: TextDecoration.none,
+                fontFamily: 'Roboto',
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ],
         ),

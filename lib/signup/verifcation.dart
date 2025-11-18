@@ -4,7 +4,7 @@ import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 import 'package:siren24/basescreen/home_screen.dart';
 import 'package:siren24/signup/signin.dart';
-import 'package:siren24/state/api_calling.dart';
+import 'package:siren24/services/user_storage.dart';
 
 class OtpVerification extends StatefulWidget {
   const OtpVerification({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class OtpVerification extends StatefulWidget {
 
 class _OtpVerificationState extends State<OtpVerification> {
   OtpFieldController otpController = OtpFieldController();
-  late String otp;
+  String otp = "";
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class _OtpVerificationState extends State<OtpVerification> {
     final Map<String, dynamic>? arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final bool isFromRegistration = arguments?['isFromRegistration'] ?? false;
-    final Map<String, dynamic>? userData = arguments?['userData'];
+    final String? phoneNumber = arguments?['phoneNumber'];
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -103,28 +103,60 @@ class _OtpVerificationState extends State<OtpVerification> {
                         height: 50,
                       ),
                       GestureDetector(
-                        onTap: () {
-                          var int_otp = int.parse(otp);
-                          ApiCaller().verifyOtp(int_otp);
-
-                          if (isFromRegistration) {
-                            // If coming from registration, show success message and redirect to login
+                        onTap: () async {
+                          // Mock OTP verification - accept 123456 as valid OTP for demo
+                          if (otp == '123456') {
+                            if (isFromRegistration) {
+                              // If coming from registration, show success message and redirect to login
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Registration successful! Please login with your credentials.'),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 3),
+                                ),
+                              );
+                              // Navigate back to login screen
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                Sign_in.id,
+                                (Route<dynamic> route) => false,
+                              );
+                            } else {
+                              // If coming from login, log in the user and go to home screen
+                              if (phoneNumber != null) {
+                                Map<String, dynamic>? user =
+                                    await UserStorageService.loginUser(
+                                        phoneNumber);
+                                if (user != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Login successful! Welcome ${user['name']}'),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context, HomeScreen.id, (route) => false);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'Login failed. Please try again.'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          } else {
+                            // Invalid OTP
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                    'Registration successful! Please login with your credentials.'),
-                                backgroundColor: Colors.green,
-                                duration: Duration(seconds: 3),
+                                    'Invalid OTP. Please use 123456 for demo.'),
+                                backgroundColor: Colors.red,
                               ),
                             );
-                            // Navigate back to login screen
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                              Sign_in.id,
-                              (Route<dynamic> route) => false,
-                            );
-                          } else {
-                            // If coming from login, go to home screen
-                            Navigator.pushNamed(context, HomeScreen.id);
                           }
                         },
                         child: Center(

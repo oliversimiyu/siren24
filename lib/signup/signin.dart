@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:siren24/signup/registration.dart';
+import 'package:siren24/signup/verifcation.dart';
 import 'package:siren24/services/user_storage.dart';
-import 'package:siren24/basescreen/home_screen.dart';
 
 class Sign_in extends StatefulWidget {
   const Sign_in({Key? key}) : super(key: key);
@@ -218,23 +218,28 @@ class _Sign_inState extends State<Sign_in> {
                         onTap: () async {
                           if (_textController.text.isNotEmpty) {
                             // Check if user exists in local storage
-                            Map<String, dynamic>? user =
-                                await UserStorageService.loginUser(
-                                    _textController.text);
+                            List<Map<String, dynamic>> users =
+                                await UserStorageService.getRegisteredUsers();
+                            bool userExists = users.any((user) =>
+                                user['phone'] == _textController.text);
 
-                            if (user != null) {
-                              // User found, login successful
+                            if (userExists) {
+                              // User found, simulate OTP sending (no real API call)
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                      'Login successful! Welcome ${user['name']}'),
+                                      'OTP sent to ${_textController.text}. Use 123456 as OTP for demo.'),
                                   backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 4),
                                 ),
                               );
 
-                              // Navigate to home screen
-                              Navigator.pushReplacementNamed(
-                                  context, HomeScreen.id);
+                              // Navigate to OTP verification screen
+                              Navigator.pushNamed(context, OtpVerification.id,
+                                  arguments: {
+                                    'isFromRegistration': false,
+                                    'phoneNumber': _textController.text,
+                                  });
                             } else {
                               // User not found
                               ScaffoldMessenger.of(context).showSnackBar(

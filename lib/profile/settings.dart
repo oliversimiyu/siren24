@@ -197,7 +197,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      ApiCaller().launchPhoneDialer('+919718459379');
+                      ApiCaller().launchPhoneDialer('+254710500108');
                     },
                     child: Container(
                       height: 44,

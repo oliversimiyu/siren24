@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:siren24/Models/addons_list.dart';
+import 'package:siren24/Models/facility.dart';
+import 'package:siren24/services/facility_service.dart';
 import '../my-globals.dart' as globals;
-import 'package:siren24/state/api_calling.dart';
 
 class AddOnList extends StatefulWidget {
   final DraggableScrollableController addoncontroller;
@@ -19,11 +19,49 @@ class AddOnList extends StatefulWidget {
 }
 
 class _AddOnListState extends State<AddOnList> {
-  List<Color> addcolor = [];
-  List<String> addonname = [];
-  Color clr = Colors.white;
-  int sel = 0;
-  bool _value = false;
+  List<Color> facilityColors = [];
+  List<Facility> selectedFacilities = [];
+  List<Facility> availableFacilities = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadFacilities();
+  }
+
+  void loadFacilities() {
+    setState(() {
+      isLoading = true;
+    });
+
+    // Simulate loading delay
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() {
+        availableFacilities = FacilityService.getNearbyFacilities();
+        facilityColors =
+            List.generate(availableFacilities.length, (index) => Colors.white);
+        isLoading = false;
+      });
+    });
+  }
+
+  void toggleFacilitySelection(int index) {
+    setState(() {
+      if (facilityColors[index] == Colors.white) {
+        // Select facility
+        facilityColors[index] = Color(0xff4C6EE5).withOpacity(0.5);
+        selectedFacilities.add(availableFacilities[index]);
+      } else {
+        // Deselect facility
+        facilityColors[index] = Colors.white;
+        selectedFacilities.remove(availableFacilities[index]);
+      }
+      // Update global variables for compatibility
+      globals.addons = selectedFacilities.map((f) => f.name).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,166 +76,248 @@ class _AddOnListState extends State<AddOnList> {
           SizedBox(
             height: 20,
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Select add on facilities',
-              style: TextStyle(
-                  fontSize: 15,
-                  fontFamily: 'Roboto',
-                  decoration: TextDecoration.none,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold),
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Select Medical Facilities',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Choose hospitals or medical centers for your emergency service',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
             ),
           ),
-          FutureBuilder<List<AddonDetails>>(
-            future: ApiCaller().FetchAddons(),
-            builder: (
-              BuildContext context,
-              snapshot,
-            ) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              } else if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return const Text('Error');
-                } else if (snapshot.hasData) {
-                  for (var i = 1; i <= snapshot.data!.length; i++) {
-                    addcolor.add(Colors.white);
-                  }
-
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          Container(
-                            height: 66,
-                            color: Colors.white,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10, right: 10),
+          isLoading
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: CircularProgressIndicator(
+                      color: Color(0xff4C6EE5),
+                    ),
+                  ),
+                )
+              : availableFacilities.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Text(
+                          'No facilities available',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: ClampingScrollPhysics(),
+                      itemCount: availableFacilities.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        Facility facility = availableFacilities[index];
+                        return Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 12),
+                              color: Colors.white,
                               child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    if (addcolor[index] == Colors.white) {
-                                      addcolor[index] =
-                                          Color(0xff4C6EE5).withOpacity(0.5);
-                                      addonname
-                                          .add(snapshot.data![index].name!);
-                                      globals.addons = addonname;
-                                    } else {
-                                      addcolor[index] = Colors.white;
-                                      addonname
-                                          .remove(snapshot.data![index].name!);
-                                    }
-                                  });
-                                },
+                                onTap: () => toggleFacilitySelection(index),
                                 child: Container(
-                                  color: addcolor[index],
-                                  child: Row(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: facilityColors[index],
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color:
+                                          facilityColors[index] == Colors.white
+                                              ? Colors.grey[300]!
+                                              : Color(0xff4C6EE5),
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        snapshot.data![index].name!,
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: 'Roboto',
-                                            decoration: TextDecoration.none,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  facility.name,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  facility.type,
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.blue[600],
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  facility.address,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.grey[600],
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.green[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Text(
+                                                  '${facility.distance} km',
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.green[700],
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.star,
+                                                    size: 12,
+                                                    color: Colors.amber[600],
+                                                  ),
+                                                  SizedBox(width: 2),
+                                                  Text(
+                                                    '${facility.rating}',
+                                                    style: TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.grey[600],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                      Expanded(child: SizedBox()),
-                                      Text(
-                                          snapshot.data![index].price!
-                                              .toString(),
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontFamily: 'Roboto',
-                                              decoration: TextDecoration.none,
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.bold)),
                                     ],
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: Divider(
-                              height: 2,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  return const Text('Empty data');
-                }
-              } else {
-                return Text('State: ${snapshot.connectionState}');
-              }
-            },
-          ),
+                            SizedBox(height: 8),
+                          ],
+                        );
+                      },
+                    ),
           SizedBox(
             height: 20,
           ),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.grey[50],
+              border: Border(
+                top: BorderSide(color: Colors.grey[300]!, width: 1),
               ),
-              Text(
-                addonname.length.toString(),
-                style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Roboto',
-                    decoration: TextDecoration.none,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400),
-              ),
-              Text(
-                '  items selected',
-                style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Roboto',
-                    decoration: TextDecoration.none,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w400),
-              ),
-              GestureDetector(
-                onTap: widget.addnext,
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    width: 164,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10),
-                      ),
-                      color: Color(0XFF4C6EE5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Next',
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${selectedFacilities.length} facilities selected',
                         style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: 'Roboto',
-                            decoration: TextDecoration.none,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w400),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      if (selectedFacilities.isNotEmpty) ...[
+                        SizedBox(height: 4),
+                        Text(
+                          selectedFacilities
+                                  .map((f) => f.name)
+                                  .take(2)
+                                  .join(', ') +
+                              (selectedFacilities.length > 2 ? '...' : ''),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                SizedBox(width: 10),
+                GestureDetector(
+                  onTap: widget.addnext,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0XFF4C6EE5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0XFF4C6EE5).withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-              )
-            ],
+              ],
+            ),
           )
         ],
       ),

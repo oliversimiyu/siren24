@@ -16,7 +16,7 @@ class InviteFriends extends StatefulWidget {
 
 class _InviteFriendsState extends State<InviteFriends> {
   late Uri uri;
-  String referral_code = "0905070017";
+  String referral_code = "OLIVER10";
   // FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
 
   Future<void> buildlink() async {
@@ -136,7 +136,7 @@ class _InviteFriendsState extends State<InviteFriends> {
                         padding: EdgeInsets.only(left: 35.w, right: 35.w),
                         child: Center(
                           child: Text(
-                            'Earn up to ₹150 a day',
+                            'Earn up to KES 150 a day',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: Colors.black,
@@ -155,7 +155,7 @@ class _InviteFriendsState extends State<InviteFriends> {
                     child: Center(
                       child: Container(
                         child: Text(
-                          'When your friend sign up with your referral code, you can receive up to ₹150 a day.',
+                          'When your friend sign up with your referral code, you can receive up to  KES 150 a day.',
                           style: TextStyle(
                             fontSize: 17.sp,
                           ),
