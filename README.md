@@ -6,36 +6,12 @@ Siren 24 is a comprehensive Flutter-based mobile application designed for emerge
 
 Siren 24 enables users to quickly book ambulances for medical emergencies with both immediate and scheduled booking options. The app features real-time notifications, comprehensive ride history, multiple payment methods, and a complete driver management system.
 
-<<<<<<< HEAD
 ## 🎬 Demo
 
 ### App Demo Video
-=======
-## ✨ Key Features
 
-### 📱 **Core Functionality**
-- **Immediate Booking**: Book ambulances instantly for emergency situations
-- **Scheduled Booking**: Schedule ambulances for planned medical appointments
-- **Real-time Location Services**: GPS-based location detection and routing
-- **Driver Assignment**: Automatic driver allocation with vehicle details
-- **Live Tracking**: Real-time ambulance tracking and ETA updates
-- **Multi-platform Support**: Available for both Android and iOS
+https://user-images.githubusercontent.com/75077531/193422846-52b3a45e-1944-408e-b8c5-fe84afa91dea.mp4
 
-### 🔔 **Notification System**
-- **Real-time Alerts**: Instant notifications for all ride events
-- **Ride Status Updates**: Booking confirmation, driver assignment, arrival alerts
-- **Payment Notifications**: Success/failure confirmations for all transactions
-- **Smart Categorization**: Color-coded notifications by event type
-- **Persistent Storage**: Notification history with offline access
->>>>>>> 8c855f1 (implemented app notification and history functionalities)
-
-### 📊 **Ride Management**
-- **Comprehensive History**: Complete log of all rides (immediate and scheduled)
-- **Detailed Records**: Source/destination, fare breakdown, driver information
-- **Status Tracking**: Real-time ride status updates (booked, in-progress, completed)
-- **Local Storage**: Offline-first approach with SharedPreferences integration
-
-<<<<<<< HEAD
 ## ✨ Key Features
 
 ### 📱 **Core Functionality**
@@ -87,36 +63,6 @@ Siren 24 enables users to quickly book ambulances for medical emergencies with b
 - **UserStorageService**: User authentication and profile management
 - **LocationServices**: GPS integration with geocoding capabilities
 
-=======
-### 💳 **Payment Integration**
-- **Multiple Payment Methods**: 
-  - Online payments via Razorpay integration
-  - Cash payment options
-  - Payment failure handling
-- **Fare Calculation**: Dynamic pricing with transparent fare breakdown
-- **Payment Confirmations**: Real-time payment status updates
-
-### 👤 **User Experience**
-- **Modern UI/UX**: Clean, intuitive design with Material Design principles
-- **Accessibility**: User-friendly interface for emergency situations
-- **Profile Management**: User registration, authentication, and profile updates
-- **Settings & Preferences**: Customizable app settings and notifications
-
-## 🛠 Implementation Details
-
-### **Architecture**
-- **Framework**: Flutter SDK with Dart programming language
-- **State Management**: Global state management with custom globals
-- **Local Storage**: SharedPreferences for offline data persistence
-- **Navigation**: Named route navigation with bottom sheets and modal dialogs
-
-### **Key Services**
-- **RideNotificationService**: Comprehensive notification management system
-- **RideHistoryService**: Local ride data storage and retrieval
-- **UserStorageService**: User authentication and profile management
-- **LocationServices**: GPS integration with geocoding capabilities
-
->>>>>>> 8c855f1 (implemented app notification and history functionalities)
 ### **Database & Storage**
 - **Local Storage**: SharedPreferences for user data, ride history, and notifications
 - **Mock API Integration**: Simulated backend services for demo functionality
@@ -214,25 +160,3 @@ flutter pub get
 
 # Run the application
 flutter run
-```
-
-### **Configuration**
-1. Set up Google Maps API keys in `android/app/src/main/AndroidManifest.xml` and `ios/Runner/AppDelegate.swift`
-2. Configure Razorpay credentials in `lib/payments/payment.dart`
-3. Set up Firebase configuration files (`google-services.json` for Android, `GoogleService-Info.plist` for iOS)
-
-## 📱 Demo & Testing
-
-The application includes comprehensive mock services for demonstration purposes, allowing full functionality testing without backend dependencies. All core features including booking, notifications, payments, and history are fully functional in demo mode.
-
-## 🤝 Contributing
-
-We welcome contributions to improve Siren 24. Please read our contributing guidelines and submit pull requests for any enhancements.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For emergency services, always call your local emergency number. This app is designed to complement, not replace, traditional emergency services.
