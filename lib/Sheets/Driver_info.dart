@@ -137,7 +137,7 @@ class _Driver_infoState extends State<Driver_info> {
                           padding: EdgeInsets.symmetric(vertical: 15),
                         ),
                         child: Text(
-                          'Pay Now',
+                          'Pay with M-Pesa',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

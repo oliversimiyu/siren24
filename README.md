@@ -37,7 +37,7 @@ https://user-images.githubusercontent.com/75077531/193422846-52b3a45e-1944-408e-
 
 ### 💳 **Payment Integration**
 - **Multiple Payment Methods**: 
-  - Online payments via Razorpay integration
+  - Online payments via M-Pesa integration
   - Cash payment options
   - Payment failure handling
 - **Fare Calculation**: Dynamic pricing with transparent fare breakdown
@@ -70,7 +70,7 @@ https://user-images.githubusercontent.com/75077531/193422846-52b3a45e-1944-408e-
 
 ### **External Integrations**
 - **Google Maps**: Location services, mapping, and route optimization
-- **Razorpay**: Secure payment processing
+- **M-Pesa**: Secure mobile money payment processing
 - **Firebase**: Push notifications and cloud messaging
 - **Awesome Notifications**: Local notification management
 
@@ -96,7 +96,7 @@ https://user-images.githubusercontent.com/75077531/193422846-52b3a45e-1944-408e-
 
 ### **Payment Processing**
 - **Fare Display**: Itemized fare breakdown (ambulance service, additional facilities)
-- **Payment Options**: Online (Razorpay) and cash payment methods
+- **Payment Options**: Online (M-Pesa) and cash payment methods
 - **Transaction Security**: Secure payment processing with error handling
 - **Payment History**: Complete transaction records with receipts
 
@@ -160,3 +160,4 @@ flutter pub get
 
 # Run the application
 flutter run
+
