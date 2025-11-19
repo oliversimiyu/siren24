@@ -5,7 +5,7 @@ import 'package:siren24/onbording/OnboardingScreens.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:siren24/services/user_storage.dart';
 
-import '../basescreen/home_screen.dart';
+import '../basescreen/main_navigation.dart';
 
 class Splash_Screen extends StatefulWidget {
   static String id = 'Splashscreen';
@@ -22,7 +22,7 @@ class _Splash_ScreenState extends State<Splash_Screen> {
     getValidationData().whenComplete(() async {
       Timer(Duration(seconds: 2), () {
         if (_authToken != " ") {
-          Navigator.pushNamed(context, HomeScreen.id);
+          Navigator.pushNamed(context, MainNavigation.id);
         } else {
           Navigator.pushNamed(context, OnboardingScreens.id);
         }

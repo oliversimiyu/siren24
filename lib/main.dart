@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:siren24/basescreen/home_screen.dart';
+import 'package:siren24/basescreen/main_navigation.dart';
 import 'package:siren24/basescreen/rating.dart';
 
 import 'package:siren24/onbording/OnboardingScreens.dart';
@@ -381,6 +382,7 @@ class _MyAppState extends State<MyApp> {
           home: Splash_Screen(),
           routes: {
             HomeScreen.id: (context) => const HomeScreen(),
+            MainNavigation.id: (context) => const MainNavigation(),
             OnboardingScreens.id: (context) => const OnboardingScreens(),
             Sign_in.id: (context) => const Sign_in(),
             Registration.id: (context) => const Registration(),

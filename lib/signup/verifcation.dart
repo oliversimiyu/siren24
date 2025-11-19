@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
-import 'package:siren24/basescreen/home_screen.dart';
+import 'package:siren24/basescreen/main_navigation.dart';
 import 'package:siren24/signup/signin.dart';
 import 'package:siren24/services/user_storage.dart';
 
@@ -135,8 +135,8 @@ class _OtpVerificationState extends State<OtpVerification> {
                                       backgroundColor: Colors.green,
                                     ),
                                   );
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, HomeScreen.id, (route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(context,
+                                      MainNavigation.id, (route) => false);
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
